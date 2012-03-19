@@ -23,12 +23,7 @@
 #
 #if defined( ZI_CXX_GCC )
 #  ifndef __typeof__
-#    ifndef ZI_NO_BOOST
-#      include <boost/typeof/typeof.hpp>
-#      define __typeof__( expr ) BOOST_TYPEOF( expr )
-#    else
-#      define __typeof__( expr ) typeof( expr )
-#    endif
+#    define __typeof__( expr ) typeof( expr )
 #  endif
 #
 #elif defined( ZI_CXX_MSVC )

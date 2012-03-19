@@ -64,19 +64,9 @@ using ZI_TYPE_TRAITS_NAMESPACE::is_pod;
 using ZI_TYPE_TRAITS_NAMESPACE::is_empty;
 using ZI_TYPE_TRAITS_NAMESPACE::is_polymorphic;
 using ZI_TYPE_TRAITS_NAMESPACE::is_abstract;
-
-// not implemented by GCC
-#ifndef __GXX_EXPERIMENTAL_CXX0X__
-    using ZI_TYPE_TRAITS_NAMESPACE::has_trivial_assign;
-#endif
-
+using ZI_TYPE_TRAITS_NAMESPACE::has_trivial_assign;
 using ZI_TYPE_TRAITS_NAMESPACE::has_trivial_destructor;
-
-// not implemented by GCC
-#ifndef __GXX_EXPERIMENTAL_CXX0X__
-    using ZI_TYPE_TRAITS_NAMESPACE::has_nothrow_assign;
-#endif
-
+using ZI_TYPE_TRAITS_NAMESPACE::has_nothrow_assign;
 using ZI_TYPE_TRAITS_NAMESPACE::has_virtual_destructor;
 using ZI_TYPE_TRAITS_NAMESPACE::is_signed;
 using ZI_TYPE_TRAITS_NAMESPACE::is_unsigned;

@@ -23,13 +23,6 @@
 
 #if defined ( __typeof__ )
 
-// #  ifdef __GXX_EXPERIMENTAL_CXX0X__
-// #    define __zi_typeof__ decltype
-// #  else
-// #    define __zi_typeof__ __typeof__
-// #  endif
-
-
 #  define FOR_EACH( it, cnt )                                   \
     FOR_EACH_RANGE( it, ( cnt ).begin(), ( cnt ).end() )
 
@@ -72,8 +65,6 @@
 #    endif
 #
 #  endif // ZI_NO_LOWERCASE_FOREACH
-
-#  undef __zi_typeof__
 
 #else  // defined( __typeof__ ) not defined
 #  error "can't define FOR_EACH macros with no __typeof__ defined"
