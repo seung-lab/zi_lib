@@ -28,7 +28,10 @@
 #include <zi/utility/assert.hpp>
 #include <zi/utility/non_copyable.hpp>
 
+#include <cstring>
+#include <errno.h>
 #include <pthread.h>
+#include <iostream>
 
 namespace zi {
 namespace concurrency_ {
@@ -54,7 +57,25 @@ public:
 
     ~mutex_tpl()
     {
-        ZI_VERIFY_0( pthread_mutex_destroy( &mutex_ ) );
+        const int code = pthread_mutex_destroy( &mutex_ );
+        if(!code){
+            return;
+        } else if(code == EBUSY) {
+            std::cerr << "mutex already locked\n";
+        } else if( code == EINVAL ){
+            std::cerr << "value specified by mutex is invalid\n";
+        }
+
+        // http://stackoverflow.com/questions/7901117/how-do-i-use-errno-in-c
+        if(!errno)
+        {
+            char buffer[ 256 ];
+            char* errorMessage = strerror_r( errno, buffer, 256 ); // get string message from errno
+            std::cerr << "mutex_tpl: destructor: pthread_mutex_destroy error: \n\t"
+                      << errorMessage << std::endl;
+        }
+
+        //ZI_VERIFY_0(code);
     }
 
     inline bool try_lock() const
