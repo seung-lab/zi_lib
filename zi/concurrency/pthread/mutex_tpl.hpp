@@ -58,6 +58,9 @@ public:
     ~mutex_tpl()
     {
         const int code = pthread_mutex_destroy( &mutex_ );
+
+#ifndef ZI_OS_MACOS
+
         if(!code){
             return;
         } else if(code == EBUSY) {
@@ -75,7 +78,9 @@ public:
                       << errorMessage << std::endl;
         }
 
-        //ZI_VERIFY_0(code);
+#else
+        ZI_VERIFY_0(code);
+#endif
     }
 
     inline bool try_lock() const

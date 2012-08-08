@@ -528,6 +528,7 @@ public:
         return res;
     }
 
+#ifndef ZI_OS_MACOS
     template< class O >
     bool equals( const mat< O, N >& rhs,
                  typename detail::promote< T, O >::type epsilon =
@@ -545,6 +546,7 @@ public:
         }
         return true;
     }
+#endif
 
     bool equals( const mat< T, N >& rhs,
                  T epsilon =
