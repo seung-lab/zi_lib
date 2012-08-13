@@ -21,11 +21,6 @@
 
 #include <zi/config/config.hpp>
 
-#ifdef __GXX_EXPERIMENTAL_CXX0X__
-#  include <type_traits>
-#  include <functional>
-#  define ZI_TYPE_TRAITS_NAMESPACE ::std
-#else
 #  if defined( ZI_USE_TR1 ) || defined( ZI_NO_BOOST )
 #    include <tr1/type_traits>
 #    define ZI_TYPE_TRAITS_NAMESPACE ::std::tr1
@@ -33,7 +28,6 @@
 #    include <boost/type_traits.hpp>
 #    define ZI_TYPE_TRAITS_NAMESPACE ::boost
 #  endif
-#endif
 
 namespace zi {
 

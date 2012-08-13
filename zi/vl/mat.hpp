@@ -527,7 +527,7 @@ public:
         }
         return res;
     }
-
+/*
 #ifndef ZI_OS_MACOS
     template< class O >
     bool equals( const mat< O, N >& rhs,
@@ -547,7 +547,7 @@ public:
         return true;
     }
 #endif
-
+*/
     bool equals( const mat< T, N >& rhs,
                  T epsilon =
                  std::numeric_limits< T >::epsilon() ) const
@@ -708,7 +708,7 @@ template< class T, std::size_t N >
 const mat< T, N > mat< T, N >::eye( 1, detail::eye_init_tag() );
 
 template< class T, std::size_t N >
-const mat< T, N > mat< T, N >::identity( 1, typename mat< T, N >::eye_init_tag() );
+const mat< T, N > mat< T, N >::identity( 1, detail::eye_init_tag() );
 
 //
 // Comparison

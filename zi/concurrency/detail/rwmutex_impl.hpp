@@ -34,7 +34,7 @@
 namespace zi {
 namespace concurrency_ {
 
-class rwmutex_impl: non_copyable
+class rwmutex_impl: zi::non_copyable
 {
 private:
 

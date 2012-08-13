@@ -21,7 +21,11 @@
 
 #include <zi/config/config.hpp>
 #
-#if defined( ZI_CXX_GCC )
+#if defined( __GXX_EXPERIMENTAL_CXX0X__ )
+#  ifndef __typeof__
+#    define __typeof__( expr ) decltype( expr )
+#  endif
+#elif defined( ZI_CXX_GCC )
 #  ifndef __typeof__
 #    define __typeof__( expr ) typeof( expr )
 #  endif
