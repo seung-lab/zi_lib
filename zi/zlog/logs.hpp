@@ -77,7 +77,7 @@ struct log_sinks: enable_singleton_of_this< log_sinks >
             logs_.error_   = &logs_.c##x##_;            \
             logs_.debug_   = &logs_.c##x##_;            \
         }                                               \
-    }
+    };
 
     ZI_ZLOG_DEFINE_INITIALIZER( out );
     ZI_ZLOG_DEFINE_INITIALIZER( err );
@@ -130,11 +130,6 @@ struct log_sinks: enable_singleton_of_this< log_sinks >
 namespace {
 
 static log_sinks &log_sinks_ = log_sinks::instance();
-
-inline void prevent_unused_wariable_warning_for_log_sinks()
-{
-    static_cast< void >( log_sinks_ );
-}
 
 }
 

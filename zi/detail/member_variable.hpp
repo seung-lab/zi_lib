@@ -50,22 +50,6 @@ struct non_const_member
     {
         return v.*MemberVariablePtr;
     }
-
-    inline const Result& operator() ( const Type& v, void* = 0 ) const
-    {
-        return v.*MemberVariablePtr;
-    }
-
-    inline Result& operator() ( const reference_wrapper< Type >& v_ref )
-    {
-        return this->operator() ( v_ref.get() );
-    }
-
-    inline const Result& operator() ( const reference_wrapper< const Type >& v_ref )
-    {
-        return this->operator() ( v_ref.get() );
-    }
-
 };
 
 template< class Type,
