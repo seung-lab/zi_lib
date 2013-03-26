@@ -92,10 +92,10 @@ template< typename T >
 struct has_trivial_copy: std::has_trivial_copy_constructor< T > {};
 
 template< typename T >
-struct has_nothrow_constructor: std::has_nothrow_default_constructor< T > {};
+struct has_nothrow_constructor: std::is_nothrow_default_constructible< T > {};
 
 template< typename T >
-struct has_nothrow_copy: std::has_nothrow_copy_constructor< T > {};
+struct has_nothrow_copy: std::is_nothrow_default_constructible< T > {};
 
 template< typename T >
 struct add_reference: std::add_lvalue_reference< T > {};
