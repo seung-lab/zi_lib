@@ -27,6 +27,10 @@
 namespace zi {
 namespace zlog {
 
+inline std::string log_printf() {
+    return "";
+}
+
 inline std::string log_printf( const char *fmt, ... )
 {
 

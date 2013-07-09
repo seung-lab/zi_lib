@@ -122,46 +122,42 @@ struct ZiLOGGING_call
 
 #define ZiLOG( _type, ... ) ZiLOG_ ## _type( __VA_ARGS__ )
 
-#define ZiLOG_DEBUG_IMPL( name )                                        \
+#define ZiLOG_DEBUG_IMPL( name, ... )                                   \
     IF_ZiLOG_IMPL( name )                                               \
     ::zi::zlog::token_wrapper( *::zi::zlog::log_sinks_.debug_ ).get()   \
-    << "DEBUG" << "(" name ")"
+    << "DEBUG" << "(" name ")" << ::zi::zlog::log_printf( __VA_ARGS__ )
 
-#define ZiLOG_DEBUG_1( x, ... ) ZiLOG_DEBUG_IMPL( #x )
-#define ZiLOG_DEBUG_0( x, ... ) ZiLOG_DEBUG_1( __VA_ARGS__ )
+#define ZiLOG_DEBUG_0( x, ... ) ZiLOG_DEBUG_IMPL( #x, __VA_ARGS__)
 
 #if defined( NDEBUG )
 #  define ZiLOG_DEBUG( ... ) if ( false ) std::cout
 #else
-#  define ZiLOG_DEBUG( ... ) ZiLOG_DEBUG_0( ~, ##__VA_ARGS__, default )
+#  define ZiLOG_DEBUG( ... ) ZiLOG_DEBUG_0( __VA_ARGS__ )
 #endif
 
-#define ZiLOG_INFO_IMPL( name )                                         \
+#define ZiLOG_INFO_IMPL( name, ... )                                    \
     IF_ZiLOG_IMPL( name )                                               \
     ::zi::zlog::token_wrapper( *::zi::zlog::log_sinks_.info_ ).get()    \
-    << "INFO" << "(" name ")"
+    << "INFO" << "(" name ")" << ::zi::zlog::log_printf( __VA_ARGS__ )
 
-#define ZiLOG_INFO_1( x, ... ) ZiLOG_INFO_IMPL( #x )
-#define ZiLOG_INFO_0( x, ... ) ZiLOG_INFO_1( __VA_ARGS__ )
-#define ZiLOG_INFO( ... ) ZiLOG_INFO_0( ~, ##__VA_ARGS__, default )
+#define ZiLOG_INFO_0( x, ... ) ZiLOG_INFO_IMPL( #x, __VA_ARGS__ )
+#define ZiLOG_INFO( ... ) ZiLOG_INFO_0( __VA_ARGS__ )
 
-#define ZiLOG_WARNING_IMPL( name )                                      \
+#define ZiLOG_WARNING_IMPL( name, ... )                                 \
     IF_ZiLOG_IMPL( name )                                               \
     ::zi::zlog::token_wrapper( *::zi::zlog::log_sinks_.warning_ ).get() \
-    << "WARNING" << "(" name ")"
+    << "WARNING" << "(" name ")" << ::zi::zlog::log_printf( __VA_ARGS__ )
 
-#define ZiLOG_WARNING_1( x, ... ) ZiLOG_WARNING_IMPL( #x )
-#define ZiLOG_WARNING_0( x, ... ) ZiLOG_WARNING_1( __VA_ARGS__ )
-#define ZiLOG_WARNING( ... ) ZiLOG_WARNING_0( ~, ##__VA_ARGS__, default )
+#define ZiLOG_WARNING_0( x, ... ) ZiLOG_WARNING_IMPL( #x, __VA_ARGS__ )
+#define ZiLOG_WARNING( ... ) ZiLOG_WARNING_0( __VA_ARGS__ )
 
-#define ZiLOG_ERROR_IMPL( name )                                        \
+#define ZiLOG_ERROR_IMPL( name, ... )                                   \
     IF_ZiLOG_IMPL( name )                                               \
     ::zi::zlog::token_wrapper( *::zi::zlog::log_sinks_.error_ ).get()   \
-    << "ERROR" << "(" name ")"
+    << "ERROR" << "(" name ")" << ::zi::zlog::log_printf( __VA_ARGS__ )
 
-#define ZiLOG_ERROR_1( x, ... ) ZiLOG_ERROR_IMPL( #x )
-#define ZiLOG_ERROR_0( x, ... ) ZiLOG_ERROR_1( __VA_ARGS__ )
-#define ZiLOG_ERROR( ... ) ZiLOG_ERROR_0( ~, ##__VA_ARGS__, default )
+#define ZiLOG_ERROR_0( x, ... ) ZiLOG_ERROR_IMPL( #x, __VA_ARGS__ )
+#define ZiLOG_ERROR( ... ) ZiLOG_ERROR_0( __VA_ARGS__ )
 
 
 #endif
