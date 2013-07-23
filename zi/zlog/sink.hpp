@@ -56,7 +56,7 @@ public:
 
         while ( tokens_.size() && tokens_.front()->is_done() )
         {
-            out_ << tokens_.front()->out_.str() << "\n";
+            out_ << tokens_.front()->out_.str() << std::endl;
             delete tokens_.front();
             tokens_.pop_front();
 
