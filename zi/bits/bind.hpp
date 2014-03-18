@@ -69,15 +69,15 @@ namespace {
 
 #ifndef ZI_PLACEHOLDERS_IN_UNNAMED
 
-using ZI_BIND_NAMESPACE::placeholders::_1;
-using ZI_BIND_NAMESPACE::placeholders::_2;
-using ZI_BIND_NAMESPACE::placeholders::_3;
-using ZI_BIND_NAMESPACE::placeholders::_4;
-using ZI_BIND_NAMESPACE::placeholders::_5;
-using ZI_BIND_NAMESPACE::placeholders::_6;
-using ZI_BIND_NAMESPACE::placeholders::_7;
-using ZI_BIND_NAMESPACE::placeholders::_8;
-using ZI_BIND_NAMESPACE::placeholders::_9;
+// using ZI_BIND_NAMESPACE::placeholders::_1;
+// using ZI_BIND_NAMESPACE::placeholders::_2;
+// using ZI_BIND_NAMESPACE::placeholders::_3;
+// using ZI_BIND_NAMESPACE::placeholders::_4;
+// using ZI_BIND_NAMESPACE::placeholders::_5;
+// using ZI_BIND_NAMESPACE::placeholders::_6;
+// using ZI_BIND_NAMESPACE::placeholders::_7;
+// using ZI_BIND_NAMESPACE::placeholders::_8;
+// using ZI_BIND_NAMESPACE::placeholders::_9;
 
 #else
 #  undef ZI_PLACEHOLDERS_IN_UNNAMED
