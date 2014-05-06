@@ -71,6 +71,7 @@ private:
     static const std::size_t delta_2y = delta_2z << 21;
     static const std::size_t delta_2x = delta_2y << 21;
 
+public:
     static inline uint64_t pack_coords( uint64_t x, uint64_t y, uint64_t z )
     {
         return ( x << 42 ) | ( y << 21 ) | z;
@@ -117,17 +118,20 @@ public:
     };
 
 
-private:
+public:
 
-    struct triangle
+    typedef vl::vec<uint64_t, 3> triangle;
+
+    struct trianglex
     {
         uint64_t a_, b_, c_;
 
-        inline triangle()
+        inline trianglex()
+            : a_(0), b_(0), c_(0)
         {
         }
 
-        inline triangle( uint64_t a, uint64_t b, uint64_t c )
+        inline trianglex( uint64_t a, uint64_t b, uint64_t c )
             : a_( a ), b_( b ), c_( c )
         {
         }
@@ -336,17 +340,17 @@ public:
 
         FOR_EACH( it, data )
         {
-            if ( !pts.count( it->a_ ) )
+            if ( !pts.count( it->at(0) ) )
             {
-                pts.insert( std::make_pair( it->a_, idx++ ) );
+                pts.insert( std::make_pair( it->at(0), idx++ ) );
             }
-            if ( !pts.count( it->b_ ) )
+            if ( !pts.count( it->at(1) ) )
             {
-                pts.insert( std::make_pair( it->b_, idx++ ) );
+                pts.insert( std::make_pair( it->at(1), idx++ ) );
             }
-            if ( !pts.count( it->c_ ) )
+            if ( !pts.count( it->at(2) ) )
             {
-                pts.insert( std::make_pair( it->c_, idx++ ) );
+                pts.insert( std::make_pair( it->at(2), idx++ ) );
             }
         }
 
@@ -365,11 +369,16 @@ public:
 
         FOR_EACH( it, data )
         {
-            ret.add_face( pts[ it->a_ ], pts[ it->b_ ], pts[ it->c_ ] );
+            ret.add_face( pts[ it->at(0) ], pts[ it->at(1) ], pts[ it->at(2) ] );
         }
 
         return idx;
 
+    }
+
+    const std::vector< triangle >& get_triangles( const Type& id ) const
+    {
+        return meshes_.find(id)->second;
     }
 
     template< class T > std::size_t
@@ -394,17 +403,17 @@ public:
 
         FOR_EACH( it, data )
         {
-            if ( !pts.count( it->a_ ) )
+            if ( !pts.count( it->at(0) ) )
             {
-                pts.insert( std::make_pair( it->a_, idx++ ) );
+                pts.insert( std::make_pair( it->at(0), idx++ ) );
             }
-            if ( !pts.count( it->b_ ) )
+            if ( !pts.count( it->at(1) ) )
             {
-                pts.insert( std::make_pair( it->b_, idx++ ) );
+                pts.insert( std::make_pair( it->at(1), idx++ ) );
             }
-            if ( !pts.count( it->c_ ) )
+            if ( !pts.count( it->at(2) ) )
             {
-                pts.insert( std::make_pair( it->c_, idx++ ) );
+                pts.insert( std::make_pair( it->at(2), idx++ ) );
             }
         }
 
@@ -422,7 +431,7 @@ public:
 
         FOR_EACH( it, data )
         {
-            ret.add_face( pts[ it->a_ ], pts[ it->b_ ], pts[ it->c_ ] );
+            ret.add_face( pts[ it->at(0) ], pts[ it->at(1) ], pts[ it->at(2) ] );
         }
 
         return idx;

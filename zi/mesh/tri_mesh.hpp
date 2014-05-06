@@ -69,41 +69,41 @@ struct tri_mesh_vertex
     uint32_t face_;
     uint32_t open_;
 
-    inline tri_mesh_vertex(): face_( 0 ), open_( 0 )
+    tri_mesh_vertex(): face_( 0 ), open_( 0 )
     {
     }
 
-    inline void reset()
+    void reset()
     {
         face_ = open_ = 0;
     }
 
-    inline bool valid() const
+    bool valid() const
     {
         return open_ & valid_edge;
     }
 
-    inline bool on_border() const
+    bool on_border() const
     {
         return open_ != valid_edge;
     }
 
-    inline uint32_t face() const
+    uint32_t face() const
     {
         return face_;
     }
 
-    inline void validate()
+    void validate()
     {
         open_ |= valid_edge;
     }
 
-    inline void unvalidate()
+    void unvalidate()
     {
         open_ &= invalid_edge;
     }
 
-    inline void face( uint32_t f )
+    void face( uint32_t f )
     {
         face_ = f;
         validate();
@@ -138,7 +138,7 @@ public:
 
 private:
 
-    inline void add_edge( uint32_t x, uint32_t y, uint32_t z, uint32_t f )
+    void add_edge( uint32_t x, uint32_t y, uint32_t z, uint32_t f )
     {
         static_cast< void >( z );
 
@@ -147,6 +147,11 @@ private:
         ZI_ASSERT( y != z );
 
         const uint64_t e = detail::make_edge( x, y );
+
+        // if ( edges_.count( e ) )
+        // {
+        //     return;
+        // }
 
         ZI_ASSERT_0( edges_.count( e ) );
 
@@ -166,7 +171,7 @@ private:
         edges_.insert( std::make_pair( e, edge_type( f, z ) ) );
     }
 
-    inline void remove_edge( uint32_t x, uint32_t y, uint32_t f )
+    void remove_edge( uint32_t x, uint32_t y, uint32_t f )
     {
         const uint64_t e = detail::make_edge( x, y );
 
@@ -255,7 +260,7 @@ public:
     {
     };
 
-    inline tri_mesh& operator=( const tri_mesh& o )
+    tri_mesh& operator=( const tri_mesh& o )
     {
         size_     = o.size_;
         vertices_ = o.vertices_;
@@ -345,7 +350,7 @@ public:
         ZI_ASSERT( edges_.count( detail::make_edge( z, x ) ) == 0 );
     }
 
-    inline uint64_t vertex_edge( const uint32_t id ) const
+    uint64_t vertex_edge( const uint32_t id ) const
     {
         if ( vertices_[ id ].on_border() )
         {
@@ -362,19 +367,19 @@ public:
         return it->second.edge_from( id );
     }
 
-    inline uint32_t across_edge( const uint64_t eid ) const
+    uint32_t across_edge( const uint64_t eid ) const
     {
         ZI_ASSERT( edges_.count( eid ) );
         return edges_.find( eid )->second.vertex_;
     }
 
-    inline uint32_t across_edge( const uint32_t v0, const uint32_t v1 ) const
+    uint32_t across_edge( const uint32_t v0, const uint32_t v1 ) const
     {
         ZI_ASSERT( edges_.count( detail::make_edge( v0, v1 ) ) );
         return edges_.find( detail::make_edge( v0, v1 ) )->second.vertex_;
     }
 
-    inline uint64_t next_edge( const uint64_t eid ) const
+    uint64_t next_edge( const uint64_t eid ) const
     {
         unordered_map< uint64_t, edge_type >::const_iterator it = edges_.find( eid );
 
@@ -386,29 +391,29 @@ public:
         return ( ( eid << 32 ) | ( ~it->second.vertex_ ) );
     }
 
-    inline uint64_t next_around( const uint64_t eid ) const
+    uint64_t next_around( const uint64_t eid ) const
     {
         unordered_map< uint64_t, edge_type >::const_iterator it = edges_.find( eid );
         return ( it == edges_.end() ) ? 0 : ( ( eid | 0xffffffffLL ) ^ it->second.vertex_ );
     }
 
-    inline uint64_t next_around_ccw( const uint64_t eid ) const
+    uint64_t next_around_ccw( const uint64_t eid ) const
     {
         return next_edge( detail::edge_inverse( eid ) );
     }
 
-    inline uint64_t next_around_cw( const uint64_t eid ) const
+    uint64_t next_around_cw( const uint64_t eid ) const
     {
         unordered_map< uint64_t, edge_type >::const_iterator it = edges_.find( eid );
         return ( it == edges_.end() ) ? 0 : ( ( eid | 0xffffffffLL ) ^ it->second.vertex_ );
     }
 
-    inline bool valid_vertex( const uint32_t id ) const
+    bool valid_vertex( const uint32_t id ) const
     {
         return vertices_[ id ].valid() && !vertices_[ id ].on_border();
     }
 
-    inline bool valid_edge( const uint64_t eid ) const
+    bool valid_edge( const uint64_t eid ) const
     {
         const uint32_t src = detail::edge_source( eid );
         const uint32_t snk = detail::edge_sink( eid );
@@ -419,17 +424,17 @@ public:
             !vertices_[ snk ].on_border();
     }
 
-    inline bool valid_edge( const uint32_t v1, const uint32_t v2 ) const
+    bool valid_edge( const uint32_t v1, const uint32_t v2 ) const
     {
         return valid_edge( detail::make_edge( v1, v2 ) );
     }
 
-    inline uint64_t edge_pair( const uint64_t eid ) const
+    uint64_t edge_pair( const uint64_t eid ) const
     {
         return detail::edge_inverse( eid );
     }
 
-    inline uint32_t edge_face( const uint64_t eid ) const
+    uint32_t edge_face( const uint64_t eid ) const
     {
         unordered_map< uint64_t, edge_type >::const_iterator it = edges_.find( eid );
 
@@ -441,7 +446,7 @@ public:
         return it->second.face_;
     }
 
-    inline uint32_t collapse_edge( uint64_t eind )
+    uint32_t collapse_edge( uint64_t eind )
     {
         uint32_t v1 = detail::edge_source( eind );
         uint32_t v2 = detail::edge_sink( eind );
@@ -483,32 +488,32 @@ public:
         return v2;
     }
 
-    inline uint32_t collapse_edge( const uint32_t x, const uint32_t y )
+    uint32_t collapse_edge( const uint32_t x, const uint32_t y )
     {
         return collapse_edge( detail::make_edge( x, y ) );
     }
 
-    inline std::size_t edge_count() const
+    std::size_t edge_count() const
     {
         return edges_.size();
     }
 
-    inline std::size_t face_count() const
+    std::size_t face_count() const
     {
         return faces_.size();
     }
 
-    inline std::size_t vertex_count() const
+    std::size_t vertex_count() const
     {
         return vertices_.size();
     }
 
-    inline std::size_t size() const
+    std::size_t size() const
     {
         return size_;
     }
 
-    inline bool check_rep() const
+    bool check_rep() const
     {
 
         if ( edges_.size() != faces_.size() * 3 )
@@ -543,7 +548,7 @@ public:
         return true;
     }
 
-    inline bool is_closed_surface() const
+    bool is_closed_surface() const
     {
         if ( edges_.size() != faces_.size() * 3 )
         {
@@ -612,6 +617,19 @@ public:
     {
         return edges_.count( detail::make_edge( v0, v1 ) );
     }
+
+    template< typename T >
+    std::size_t get_faces( std::vector<T>& r )
+    {
+        r.resize(faces_.size());
+        std::size_t i = 0;
+        FOR_EACH( it, faces_ )
+        {
+            r[i++] = T(it->second.v0(), it->second.v1(), it->second.v2());
+        }
+        return r.size();
+    }
+
 
     std::size_t stripify() const
     {

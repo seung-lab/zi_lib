@@ -35,7 +35,7 @@ namespace zi {
 namespace mesh {
 
 // forward declaration
-class tri_mesh;
+struct tri_mesh;
 
 namespace detail {
 

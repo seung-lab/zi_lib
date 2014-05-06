@@ -21,6 +21,7 @@
 
 #include <zi/bits/shared_ptr.hpp>
 #include <zi/bits/unordered_set.hpp>
+#include <zi/bits/unordered_map.hpp>
 #include <zi/utility/static_assert.hpp>
 
 #include <zi/heap/binary_heap.hpp>
@@ -49,14 +50,13 @@ private:
     typedef vl::vec< Float, 3 >        coord_t     ;
     typedef detail::quadratic< Float > quadratic_t ;
 
-    std::size_t                 size_    ;
-    mesh::tri_mesh              mesh_    ;
-    std::vector< coord_t >      points_  ;
-    std::vector< coord_t >      normals_ ;
+    std::size_t                 size_     ;
+    mesh::tri_mesh              mesh_     ;
+    std::vector< coord_t >      points_   ;
+    std::vector< coord_t >      normals_  ;
 
     std::vector< quadratic_t >  quadratic_;
-
-    unordered_set< uint64_t >   invalid_ ;
+    unordered_set< uint64_t >   invalid_  ;
 
     struct heap_entry
     {
@@ -124,15 +124,17 @@ private:
 
     heap_type heap_;
 
+
+
 private:
-    inline bool check_valid_edge( const uint64_t e ) const
+    bool check_valid_edge( const uint64_t e ) const
     {
         return e && mesh_.valid_edge( e );
     }
 
-    inline bool check_compactness( const uint64_t e, const vl::vec< Float, 3 >& p ) const
+    bool check_compactness( const uint64_t e, const vl::vec< Float, 3 >& p ) const
     {
-        const Float min_compactness = 0.1;
+        const Float min_compactness = 0.05;
 
         const uint32_t v0 = detail::edge_source( e );
         const uint32_t v1 = detail::edge_sink( e );
@@ -177,7 +179,7 @@ private:
         return true;
     }
 
-    inline bool check_inversion( const uint64_t e, const vl::vec< Float, 3 >& p )
+    bool check_inversion( const uint64_t e, const vl::vec< Float, 3 >& p )
     {
         //if ( invalid_.count( e ) )
         //{
@@ -185,7 +187,7 @@ private:
         //}
 
         const uint32_t max_degree = 15;
-        const Float    min_angle  = 0.01;
+        const Float    min_angle  = 0.001;
 
         const uint32_t v0 = detail::edge_source( e );
         const uint32_t v1 = detail::edge_sink( e );
@@ -231,7 +233,7 @@ private:
         return degree < max_degree;
     }
 
-    inline bool check_topology( const uint64_t e )
+    bool check_topology( const uint64_t e )
     {
 
         if ( invalid_.count( e ) )
@@ -401,28 +403,33 @@ public:
         return mesh_.add_face( x, y, z );
     }
 
-    inline void prepare()
+    void prepare(bool init_normals = true)
     {
         //mesh_.check_rep();
         generate_quadratics();
-        generate_normals();
+        if ( init_normals )
+        {
+            generate_normals();
+        }
         init_heap();
+        //std::cout << "HS: " << heap_size() << "\n";
+        //std::cout << "FC: " << mesh_.face_count() << "\n";
     }
 
-    inline std::size_t heap_size() const
+    std::size_t heap_size() const
     {
         return heap_.size();
     }
 
-    inline std::size_t round()
+    std::size_t round()
     {
         iterate();
         return heap_.size();
     }
 
-    inline std::size_t optimize( std::size_t target_faces,
-                                 Float max_error,
-                                 Float min_error = std::numeric_limits< Float >::epsilon() * 25 )
+    std::size_t optimize( std::size_t target_faces,
+                          Float max_error,
+                          Float min_error = std::numeric_limits< Float >::epsilon() * 25 )
     {
 
         //double no_faces = static_cast< double >( mesh_.face_count() );
@@ -445,28 +452,30 @@ public:
         //generate_normals();
 
         invalid_.clear();
-        //std::cout << "Face ratio: " << ( static_cast< double >( mesh_.face_count() ) / no_faces ) << "\n";
-        //std::cout << "Next error: " << this->min_error() << "\n";
-        //std::cout << "Total Face: " << mesh_.face_count() << "\n";
+        // std::cout << "Face ratio: " << ( static_cast< double >( mesh_.face_count() ) / target_faces ) << "\n";
+        // std::cout << "Next error: " << this->min_error() << "\n";
+        // std::cout << "Total Face: " << mesh_.face_count() << "\n";
+        // std::cout << "Heap Size : " << heap_.size() << "\n";
+        // std::cout << "Bad  Size : " << bad << "\n";
         return mesh_.face_count();
     }
 
-    inline std::size_t face_count() const
+    std::size_t face_count() const
     {
         return mesh_.face_count();
     }
 
-    inline std::size_t edge_count() const
+    std::size_t edge_count() const
     {
         return mesh_.edge_count();
     }
 
-    inline std::size_t vertex_count() const
+    std::size_t vertex_count() const
     {
         return size_;
     }
 
-    inline Float min_error() const
+    Float min_error() const
     {
         if ( heap_.size() )
         {
@@ -476,7 +485,7 @@ public:
         return 0;
     }
 
-    inline detail::tri_mesh_face_container& faces()
+    detail::tri_mesh_face_container& faces()
     {
         return mesh_.faces;
     }
@@ -516,9 +525,59 @@ public:
         return res;
     }
 
+
+public:
+
+#define ZI_MESH_SIMPLIFIER_GET_FACES_HELPER_FUNCTION(__what)       \
+    if ( reduction[__what] & 0x8000000 )                           \
+    {                                                              \
+        reduction[__what] = max_idx;                               \
+        indices.push_back(__what);                                 \
+        __what = max_idx++;                                        \
+    }                                                              \
+    else                                                           \
+    {                                                              \
+        __what = reduction[__what];                                \
+    }                                                              \
+    static_cast<void>(0)
+
+    std::size_t get_faces( std::vector< vl::vec< Float, 3 > >& points,
+                           std::vector< vl::vec< Float, 3 > >& normals,
+                           std::vector< vl::vec< uint32_t, 3 > >& faces )
+    {
+        mesh_.get_faces( faces );
+
+        std::vector< uint32_t > reduction(points_.size(), 0x8000000);
+        std::vector< uint32_t > indices;
+        indices.reserve(faces.size()*3);
+
+        uint32_t max_idx = 0;
+
+        for ( std::size_t i = 0; i < faces.size(); ++i )
+        {
+            ZI_MESH_SIMPLIFIER_GET_FACES_HELPER_FUNCTION(faces[i][0]);
+            ZI_MESH_SIMPLIFIER_GET_FACES_HELPER_FUNCTION(faces[i][1]);
+            ZI_MESH_SIMPLIFIER_GET_FACES_HELPER_FUNCTION(faces[i][2]);
+        }
+
+        points.resize(indices.size());
+        normals.resize(indices.size());
+
+        for ( std::size_t i = 0; i < indices.size(); ++i )
+        {
+            //std::cout << indices[i] << " ---> " << i << '\n';
+            points[i]  = points_[indices[i]];
+            normals[i] = normals_[indices[i]];
+        }
+
+        return faces.size();
+    }
+
+#undef ZI_MESH_SIMPLIFIER_GET_FACES_HELPER_FUNCTION
+
 private:
 
-    inline bool check_valid( const uint64_t e, const vl::vec< Float, 3 >& p ) const
+    bool check_valid( const uint64_t e, const vl::vec< Float, 3 >& p ) const
     {
         // todo: better inverion check
         //return ( check_topology( e, p ) && ( check_inversion( e, p ) < 0.1 ) );
@@ -537,21 +596,25 @@ private:
 
         if ( !check_valid_edge( e.edge_ ) )
         {
+            //std::cout << "valid_edge\n";
             return false;
         }
 
         if ( !check_topology( e.edge_ ) )
         {
+            //std::cout << "topology\n";
             return false;
         }
 
         if ( !check_inversion( e.edge_, e.optimal_ ) ) // todo: better
         {
+            //std::cout << "inversion\n";
             return false;
         }
 
         if ( !check_compactness( e.edge_, e.optimal_ ) )
         {
+            //std::cout << "compactness\n";
             return false;
         }
 
