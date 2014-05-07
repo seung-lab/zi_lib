@@ -286,7 +286,7 @@ public:
                                 ( Index < 3 ), ::zi::detail::dummy< Index >
                                 >::type = 0 ) const
         {
-            return i_->second.vertex< Index >();
+            return i_->second.template vertex< Index >();
         }
 
         inline uint32_t v0() const
@@ -329,7 +329,7 @@ public:
                               ( Index < 3 ), ::zi::detail::dummy< Index >
                               >::type = 0 ) const
         {
-            return i_->second.edge< Index >();
+            return i_->second.template edge< Index >();
         }
 
         inline uint64_t edge_from( uint32_t v ) const
